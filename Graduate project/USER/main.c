@@ -49,7 +49,39 @@ void GetPowerMag(void);
          else
              lBufMagArray[i] = (u32)(Mag * 65536);
      }
+		 lBufMagArray[0] = 0;
  }
+  /******************************************************************
+  函数名称:quicksort()
+  函数功能:快速排序算法
+  参数说明:数组排序的边界
+  备　　注:
+  *******************************************************************/
+void quicksort(int left, int right) {
+	int i, j, t, temp;
+	if(left > right)
+		return;
+    temp = lBufMagArray[left]; //temp中存储基准数
+    i = left;
+    j = right;
+    while(i != j) { //顺序： 从右边开始找
+    	while(lBufMagArray[j] >= temp && i < j)
+    		j--;
+    	while(lBufMagArray[i] <= temp && i < j)//再找右边的
+    		i++;       
+    	if(i < j)//交换位置
+    	{
+    		t = lBufMagArray[i];
+    		lBufMagArray[i] = lBufMagArray[j];
+    		lBufMagArray[j] = t;
+    	}
+    }
+    //最终将基准数归位
+    lBufMagArray[left] = lBufMagArray[i];
+    lBufMagArray[i] = temp;
+    quicksort(left, i-1);//递归处理左边
+    quicksort(i+1, right);//递归处理右边
+}
  int main(void)
  {	
   uint16 i, j, z; 
@@ -80,18 +112,16 @@ void GetPowerMag(void);
 			printf("\r\n幅值：\r\n");
 		for(j=0; j<NPT; j++)
 		{
-			//printf("\r\n%d\r\n", WriteBuff[j], Value[j], lBufInArray[j]);
 			printf("\r\n%d\r\n",
-			          WriteBuff[j]);
+			          WriteBuff[j]); // 输出原始数据
 		}
-//		for(j=0; j<NPT/2; j++)
-//		{
-//			printf("\r\n%d\r\n", lBufOutArray[j]);
-//		}
 		for(z=0; z<NPT/2; z++)
 		{ 
-			printf("\r\n%d\r\n", lBufMagArray[z]);
+			printf("\r\n%d\r\n", lBufMagArray[z]); // 输出FFT结果
 		}
+		quicksort(0, NPT/2); //输出前三阶频率值
+		
+		
 		
 			dma_flag = 0;
 		}
